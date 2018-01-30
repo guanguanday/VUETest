@@ -44,7 +44,7 @@
             },500)
           },
           close:function () {
-
+            this.isShow = false;
           }
         },
         mounted(){

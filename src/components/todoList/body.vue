@@ -33,6 +33,7 @@
             },
             deleteItem:function (item) {
               console.log("id: "+item.id + ", will be deleted!");
+              this.delCb(item);
             }
         },
         mounted(){
