@@ -10,6 +10,7 @@
 </template>
 
 <script>
+  var flag = "add";
     export default {
         name: "ItemDialog",
         data(){
@@ -35,6 +36,7 @@
             },100)
           },
           save:function () {
+            console.log("action flag is: " + flag);
             var that = this;
             window.setTimeout(function () {
               that.isShow = false;
@@ -49,9 +51,15 @@
             this.isShow = false;
             var that = this;
             eventCtl.on("showData",function (data) {
-              console.log("selected item id is: ",data.id);
+              if(!data){
+                flag = "add";
+                console.log("add action");
+              }else{
+                flag = "edit";
+                that.bind(data.id);
+                console.log("selected item id is: ",data.id);
+              }
               that.isShow = true;
-              that.bind(data.id);
               // that.item = data;
             })
         }
