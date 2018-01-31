@@ -8,8 +8,8 @@
 </template>
 
 <script>
-    import Head from './header';
-    import Body from './body';
+    import Head from './header.vue';
+    import Body from './body.vue';
     export default {
         components:{Head,Body},
         props:['getUrl'],

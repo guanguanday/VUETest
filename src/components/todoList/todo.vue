@@ -17,8 +17,8 @@
 </template>
 
 <script>
-    import TodoTable from "./table";
-    import ItemDialog from "./dialog";
+    import TodoTable from "./table.vue";
+    import ItemDialog from "./dialog.vue";
     export default {
       components: {ItemDialog,TodoTable},
       name: "todoList",
