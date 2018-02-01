@@ -7,6 +7,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 module.exports = (env = {}) =>{
   console.log(`------------------- ${env.production?'生产':'开发'}环境 -------------------`);
   var plugins = (module.exports.plugins || []).concat([
+    new CleanWebpackPlugin(['dist']),
     new webpack.optimize.UglifyJsPlugin({
       sourceMap: true,
       compress: {
@@ -25,7 +26,6 @@ module.exports = (env = {}) =>{
     to: 'static'
   }]));
   plugins.push(new HtmlWebpackPlugin({template: 'index.html'}));
-  plugins.push(new CleanWebpackPlugin(['dist']));
 
   return {
     entry: './src/main.js',//入口
