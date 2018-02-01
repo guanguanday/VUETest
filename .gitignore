@@ -1,0 +1,10 @@
+logs/*
+dataCenter/build/*
+!.gitkeep
+node_modules/
+bower_components/
+tmp
+.DS_Store
+.idea/*
+.project
+dist/*
