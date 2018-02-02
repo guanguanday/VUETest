@@ -7,7 +7,9 @@
         name: "BodySection",
         props:["communityKey","actions","body"],
         data(){
+            return {
 
+            }
         },
         methods:{
 

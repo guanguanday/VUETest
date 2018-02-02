@@ -18,7 +18,7 @@
                 index:this.options.index,
                 pageTotal:this.options.total,
                 countTotal:this.options.countTotal,
-                clickCallback:this.options.clickCallback,
+                pagingCallback:this.options.pagingCallback,
                 enterIndex:0
             }
         },
@@ -28,21 +28,21 @@
                     return;
                 }
                 this.index ++;
-                this.clickCallback(this.index);
+                this.pagingCallback(this.index);
             },
             prev:function () {
                 if(this.index == 1){
                     return;
                 }
                 this.index--;
-                this.clickCallback(this.index);
+                this.pagingCallback(this.index);
             },
             go:function () {
                 if( this.enterIndex > this.pageTotal ||this.enterIndex< 1 || isNaN(this.enterIndex)){
                     this.enterIndex = "";
                     return;
                 }
-                this.clickCallback(this.enterIndex);
+                this.pagingCallback(this.enterIndex);
             }
         }
     }

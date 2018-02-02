@@ -13,65 +13,50 @@
  * code失败的情况下，打印message
  * data  为返回结果
  **/
-import CommonUtil from "./commonUtil.js";
-var AjaxUtil = function(){
-    this.get = function(url){
-        var originUrl = url;
-        var symbol = url.indexOf('?') == -1?"?":"&";
+let AjaxUtil = function(){
+    this.doFetch = function(url,method,data){
+        let symbol = url.indexOf('?') == -1?"?":"&";
         url = url + symbol + "ran="+Math.ceil(Math.random()*10000000);
-        var defer = $q.defer();
+        let defer = Q.defer();
 
-        fetch(url).then(d =>d.json());
-
-        $http.get(url).success(function(d){
-            var code = d.code;
+        let headers = {
+            'Content-Type': 'application/json'
+        };
+        let options = {
+            method:method.toUpperCase(),
+            credentials:'include',
+            headers:headers
+        };
+        if(method.toLowerCase() == "post"){
+            if(data){
+                options.body = JSON.stringify(data);
+            }
+        }
+        let that = this;
+        fetch(url).then(d =>d.json()).then(function (data) {
+            let code = data.code;
             if(code == "701"){
-                $state.go('login');
+                that.$router.push({path:"todo"});
             }else{
                 if(code == "200"){
-                    defer.resolve({data: d.data});
+                    defer.resolve({data: CommonUtil.addPrimaryAndCk(data.data)});
                 }else{
-                    defer.reject({data: d.message});
+                    defer.reject({data: data.message});
                 }
             }
-        }).error(function(a,b,c,d){
-            CommonUtil.throwError("["+ originUrl + "] request error!");
+        }).catch(function(err) {
             defer.reject({data: "Server Error!"});
-        })
+            throw new Error(url + " request server error!");
+        });
         return defer.promise;
     };
-
-    this.post = function(url,data){
-        var originUrl = url;
-        var symbol = url.indexOf('?') == -1?"?":"&";
-        url = url + symbol + "ran="+Math.ceil(Math.random()*10000000);
-        var defer = $q.defer();
-        $http({
-            method:"POST",
-            url:url,
-            data:data
-        }).success(function(d){
-            var code = d.code;
-            if(code == "701"){
-                $state.go('login');
-            }else{
-                if(code == "200"){
-                    defer.resolve({data: d.data});
-                }else{
-                    defer.reject({data: d.message});
-                }
-            }
-        }).error(function(d){
-            CommonUtil.throwError("["+ originUrl + "] request error!");
-            defer.reject({data: "Server Error!"});
-        })
-        return defer.promise;
-    };
-
-    this.all = function(promises){
-        return $q.all(promises);
-    }
-
 };
-var AjaxService = new AjaxUtil();
-export default AjaxService;
+
+let AjaxService = new AjaxUtil();
+import CommonUtil from "./commonUtil.js";
+export default {
+    name: "AjaxUtil",
+    methods:{
+        doFetch:AjaxService.doFetch
+    }
+};

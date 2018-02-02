@@ -1,6 +1,6 @@
 <template>
     <div class="tableContainer">
-        <body-section ref="primaryKey" :actions="actionOptions" :community-key="primaryKey" :body="bodyOptions"></body-section>
+        <body-section ref="primaryKey" :actions="actionOptions" :community-key="primaryKey" :body="bodyData"></body-section>
 
         <paging :options="pagingOptions"></paging>
     </div>
@@ -10,63 +10,72 @@
     import BodySection from "./body.vue";
     import Paging from "./paging.vue";
     import CommonUtil from "../../tool/commonUtil.js";
-    import {AjaxUtil} from "../../tool/ajaxUtil.js";
+    import AjaxUtil from "../../tool/ajaxUtil.js";
     export default {
+        extends:AjaxUtil,
         components: {BodySection,Paging},
         props:["options"],
-        name: "table-list",
+        name: "TableList",
         data(){
             return {
                 pagingOptions:this.options.paging,
                 bodyOptions:this.options.body,
                 actionOptions:this.options.actions,
-                primaryKey:this.options.primaryKey
+                primaryKey:Math.ceil(Math.random()*1000000000),
+                currentIndex:1,
+                bodyData:[],
+                pagingData:{
+                    index:1,
+                    pageTotal:1,
+                    countTotal:1,
+                    pagingCallback:this.pagingCallback
+                }
             }
         },
         methods:{
             getUrl:function (index){
-                if(typeof constant.getUrl != "function" || constant.getUrl() == ""){
+                var _get_url = this.pagingOptions.getUrl;
+                if(typeof _get_url != "function" || _get_url() == ""){
                     CommonUtil.throwError("TableList must config getUrl param");
                     return "";
                 }
                 if(!index){
-                    index = $scope.currentIndex;
+                    index = this.currentIndex;
                 }
-                var url = constant.getUrl();
+                var url = this.pagingOptions.getUrl();
                 var chat = url.indexOf('?') ==-1?"?":"&";
-                var pageParams = constant.pageParams;
-                url = url + chat + pageParams["indexKey"] + "=" + index + "&" + pageParams["sizeKey"] + "=" + size+"&ran="+Math.random();
+                var pageParams = this.pagingOptions.pageParams;
+                url = url + chat + pageParams["indexKey"] + "=" + index + "&" + pageParams["sizeKey"] + "=" + pageParams.size+"&ran="+Math.random();
                 return url;
             },
             getData:function (index){
-                if(this.getUrl(index) == ""){
+                var _url = this.getUrl(index);
+                if(_url == ""){
                     return;
                 }
-                AjaxUtil.get(this.getUrl(index)).then(function(d){
+                var that = this;
+                this.doFetch(_url,"get",null).then(function(d){
                     //处理body需要的数据结构完毕
-                    var data = constant.analysis(d.data);
+                    var data = that.pagingOptions.analysis(d.data);
                     var list = CommonUtil.addPrimaryAndCk(data.data);
 
                     //页码数据赋值
                     if(parseInt(data.totalCount)%size == 0){
-                        $scope.totalPage = parseInt(data.totalCount)/size;
+                        that.pagingData.totalPage = parseInt(data.totalCount)/size;
                     }else{
-                        $scope.totalPage = parseInt(parseInt(data.totalCount)/size) + 1;
+                        that.pagingData.totalPage = parseInt(parseInt(data.totalCount)/size) + 1;
                     }
-                    $scope.totalCount = data.totalCount;
-                    if(constant.callback){
-                        constant.callback(list,$scope.currentIndex);
+                    that.pagingData.totalCount = data.totalCount;
+                    if(that.pagingData.callback){
+                        that.pagingOptions.callback(list,that.currentIndex);
                     }
 
-                    Communication.broadcast($scope.communicationKey,list);
+                    eventCtl.broadcast(that.primaryKey,list);
                 })
             },
             init:function(){
-                $scope.currentIndex = constant.pageParams.index;
-                ctl.getData($scope.currentIndex);
-            },
-            reload:function () {
-
+                this.currentIndex = this.pagingOptions.pageParams.index;
+                this.getData(this.currentIndex);
             }
         }
     }
