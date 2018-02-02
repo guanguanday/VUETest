@@ -40,10 +40,17 @@ export default {
                   // currentIndex = index;
               }
           },
-          headBody:{
+          body:{
               map:[
-                  {key:"id",value:"id"},
                   {key:"username",value:"username"},
+                  {key:"id",value:"id",convert:function (a,b,c,d) {
+                          let dom = document.querySelector("#"+b.__tmpId);
+                          if(a>5){
+                              dom.innerHTML = "<span style='color:red'></span>";
+                          } else {
+                              dom.innerHTML = "<span style='color:yellow'></span>";
+                          }
+                      }},
                   {key:"name",value:"name"},
                   {key:"id",value:"name11"}
               ],
@@ -53,8 +60,7 @@ export default {
               }
           },
           actions:[
-              {name:"edit",action:function () {
-
+              {name:"edit",action:function (a,b,c) {
                   }},
               {name:"delete",action:function () {
 

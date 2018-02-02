@@ -1,32 +1,29 @@
 <template>
     <div>
-        总条数:{{item.countTotal}}
+        总条数:{{countTotal}}
         <a @click='prev'>上一页</a>
         <a @click='next'>下一页</a>
-        {{item.index}}/{{item.pageTotal}} to
-        <input type='text' v-model='item.enterIndex' />
+        {{index}}/{{pageTotal}} to
+        <input type='text' v-model='enterIndex' />
         <a @click='go'>确定</a>
     </div>
 </template>
 
 <script>
     export default {
-        props:["options"],
+        props:["options","communityKey"],
         name: "Paging",
         data(){
             return {
-                item:{
-                    index:this.options.index,
-                    pageTotal:this.options.pageTotal,
-                    countTotal:this.options.countTotal,
-                    pagingCallback:this.options.callback,
-                    enterIndex:0
-                }
+                index:this.options.index,
+                pageTotal:this.options.pageTotal,
+                countTotal:this.options.countTotal,
+                pagingCallback:this.options.callback,
+                enterIndex:""
             }
         },
         methods:{
             next:function () {
-                debugger
                 if(this.index == this.pageTotal){
                     return;
                 }
@@ -34,7 +31,6 @@
                 this.pagingCallback(this.index);
             },
             prev:function () {
-                debugger
                 if(this.index == 1){
                     return;
                 }
@@ -42,7 +38,6 @@
                 this.pagingCallback(this.index);
             },
             go:function () {
-                debugger
                 if( this.enterIndex > this.pageTotal ||this.enterIndex< 1 || isNaN(this.enterIndex)){
                     this.enterIndex = "";
                     return;
@@ -50,8 +45,18 @@
                 this.pagingCallback(this.enterIndex);
             }
         },
-        updated:function (a,b) {
+        updated(a,b) {
             console.log("-------------------",a,b);
+        },
+        mounted(){
+            var that = this;
+            console.log(this.communityKey);
+            eventCtl.on(this.communityKey,function (data) {
+                that.index = data.index;
+                that.pageTotal = data.pageTotal;
+                that.countTotal = data.countTotal;
+                that.enterIndex = "";
+            })
         }
     }
 </script>

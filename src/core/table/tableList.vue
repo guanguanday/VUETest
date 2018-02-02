@@ -1,8 +1,8 @@
 <template>
     <div class="tableContainer">
-        <body-section ref="primaryKey" :actions="actionOptions" :community-key="primaryKey" :body="bodyData"></body-section>
+        <body-section :ck-callback="bodyOptions.ckCallback?bodyOptions.ckCallback:null" :show-ck="bodyOptions.showCk?true:false" :header-cols="bodyOptions.map" :actions="actionOptions" :community-key="bodyPrimaryKey" :body-data="bodyData"></body-section>
 
-        <paging :options="pagingData"></paging>
+        <paging :community-key="pagingPrimaryKey" :options="pagingData"></paging>
     </div>
 </template>
 
@@ -21,13 +21,14 @@
                 pagingOptions:this.options.paging,
                 bodyOptions:this.options.body,
                 actionOptions:this.options.actions,
-                primaryKey:Math.ceil(Math.random()*1000000000),
+                pagingPrimaryKey:Math.ceil(Math.random()*1000000000),
+                bodyPrimaryKey:Math.ceil(Math.random()*1000000000),
                 currentIndex:1,
-                bodyData:[],
+                bodyData:{},
                 pagingData:{
-                    index:1,
-                    pageTotal:1,
-                    countTotal:1,
+                    index:"-",
+                    pageTotal:"-",
+                    countTotal:"-",
                     callback:this.pagingReload
                 }
             }
@@ -68,17 +69,22 @@
                     }else{
                         that.pagingData.pageTotal = parseInt(parseInt(data.totalCount)/size) + 1;
                     }
+                    that.pagingData.index = index?index:1;
                     that.pagingData.countTotal = data.totalCount;
                     if(that.pagingOptions.callback){
                         that.pagingOptions.callback(list,that.currentIndex);
                     }
-                    debugger
-                    eventCtl.broadcast(that.primaryKey,list);
+                    //通知body和paging更新数据
+                    eventCtl.broadcast(that.pagingPrimaryKey,that.pagingData);
+                    eventCtl.broadcast(that.bodyPrimaryKey,list);
                 })
             },
             init:function(){
                 this.currentIndex = this.pagingOptions.pageParams.index;
                 this.getData(this.currentIndex);
+            },
+            created(){
+
             }
         }
     }
