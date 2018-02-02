@@ -1,10 +1,11 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import Vuex from 'vuex';
 import HelloWorld from '../components/HelloWorld.vue';
 import TodoList from '../components/todoList/todo.vue';
-import Base from "../tool/ajaxUtil";
 
-Vue.use(Router)
+Vue.use(Router);
+Vue.use(Vuex);
 
 export default new Router({
   routes: [
@@ -17,11 +18,6 @@ export default new Router({
       path: '/todo',
       name: 'TodoList',
       component: TodoList
-    },
-    {
-        path: '/AjaxService',
-        name: 'AjaxService',
-        component: Base
     }
   ]
 })

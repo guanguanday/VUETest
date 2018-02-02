@@ -39,7 +39,7 @@ let AjaxUtil = function(){
                 that.$router.push({path:"todo"});
             }else{
                 if(code == "200"){
-                    defer.resolve({data: CommonUtil.addPrimaryAndCk(data.data)});
+                    defer.resolve({data:data.data,list: CommonUtil.addPrimaryAndCk(data.data.list)});
                 }else{
                     defer.reject({data: data.message});
                 }

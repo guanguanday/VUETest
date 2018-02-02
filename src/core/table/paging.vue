@@ -1,11 +1,11 @@
 <template>
     <div>
-        总条数:{{countTotal}}
-        <a @click='prev();'>上一页</a>
-        <a @click='next();'>下一页</a>
-        {{index}}/{{pageTotal}} to
-        <input type='text' v-model='enterIndex' />
-        <a @click='go()'>确定</a>
+        总条数:{{item.countTotal}}
+        <a @click='prev'>上一页</a>
+        <a @click='next'>下一页</a>
+        {{item.index}}/{{item.pageTotal}} to
+        <input type='text' v-model='item.enterIndex' />
+        <a @click='go'>确定</a>
     </div>
 </template>
 
@@ -15,15 +15,18 @@
         name: "Paging",
         data(){
             return {
-                index:this.options.index,
-                pageTotal:this.options.total,
-                countTotal:this.options.countTotal,
-                pagingCallback:this.options.pagingCallback,
-                enterIndex:0
+                item:{
+                    index:this.options.index,
+                    pageTotal:this.options.pageTotal,
+                    countTotal:this.options.countTotal,
+                    pagingCallback:this.options.callback,
+                    enterIndex:0
+                }
             }
         },
         methods:{
             next:function () {
+                debugger
                 if(this.index == this.pageTotal){
                     return;
                 }
@@ -31,6 +34,7 @@
                 this.pagingCallback(this.index);
             },
             prev:function () {
+                debugger
                 if(this.index == 1){
                     return;
                 }
@@ -38,12 +42,16 @@
                 this.pagingCallback(this.index);
             },
             go:function () {
+                debugger
                 if( this.enterIndex > this.pageTotal ||this.enterIndex< 1 || isNaN(this.enterIndex)){
                     this.enterIndex = "";
                     return;
                 }
                 this.pagingCallback(this.enterIndex);
             }
+        },
+        updated:function (a,b) {
+            console.log("-------------------",a,b);
         }
     }
 </script>
