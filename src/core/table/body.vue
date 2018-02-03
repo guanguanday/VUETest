@@ -1,17 +1,17 @@
 <template>
-    <table class="tableList table table-hover table-condensed">
+    <table class="table table-bordered table-hover">
         <thead>
         <tr>
-            <th v-show="showCk"><input v-model="allCK" type="checkbox" @click="selectAll();" /></th>
+            <th v-show="showCk" class="text-center"><input v-model="allCK" type="checkbox" @click="selectAll();" /></th>
             <th v-show="showActions" class="text-center">操作</th>
-            <th v-for="item in originCols" :key="item.value">{{item.value}}</th>
+            <th v-for="item in originCols" :key="item.value" class="text-center">{{item.value}}</th>
         </tr>
         </thead>
         <tbody>
         <tr @click="selectOne(item);" v-for="item in bodyData" :key="item.__tmpId">
             <td v-show="showCk" class="relative"><div class="maskLayer"></div><input ng-model="item.ck" type="checkbox" /></td>
             <td v-show="showActions" class="text-center">
-                <a v-for="x in actions" @click="x['action'](item,bodyData);" class="btn btn-default btn-xs">{{x.name}}</a>
+                <a v-for="x in actions" @click="x['action'](item,bodyData);" class="btn btn-default btn-xs btnCls">{{x.name}}</a>
             </td>
             <td v-for="col in originCols" :key="col.key">
                 <div v-if="col.config.convert && col.config.click">
@@ -111,5 +111,8 @@
     }
     .tableList .maskLayer{
         position: absolute;left: 0;top: 0;bottom: 0;right: 0;
+    }
+    .btnCls{
+        margin:0 5px;
     }
 </style>
