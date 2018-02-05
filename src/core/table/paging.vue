@@ -1,11 +1,11 @@
 <template>
     <div class="text-right" style="margin-right:40px;">
         总条数:{{countTotal}}
-        <input type="button" class="btn btn-info btn-sm" @click='prev' value="上一页">
-        <input type="button" class="btn btn-info btn-sm" @click='next' value="下一页">
+        <input type="button" class="btn btn-info btn-sm" @click='prev' value="上一页" />
+        <input type="button" class="btn btn-info btn-sm" @click='next' value="下一页" />
         {{index}}/{{pageTotal}} to
         <input type='text' class="form-control input-sm enterIndexCls" v-model='enterIndex' />
-        <input type="button" class="btn btn-success btn-sm" @click='go' value="确定">
+        <input type="button" class="btn btn-success btn-sm" @click='go' value="确定" />
 
         <!--另一种分页样式-->
         <div>

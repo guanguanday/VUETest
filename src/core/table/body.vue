@@ -4,27 +4,27 @@
         <tr>
             <th v-show="showCk" class="text-center"><input v-model="allCK" type="checkbox" @click="selectAll();" /></th>
             <th v-show="showActions" class="text-center">操作</th>
-            <th v-for="item in originCols" :key="item.value" class="text-center">{{item.value}}</th>
+            <th v-for="item in originCols" :key="item.key" class="text-center">{{item.value}}</th>
         </tr>
         </thead>
         <tbody>
         <tr @click="selectOne(item);" v-for="item in bodyData" :key="item.__tmpId">
             <td v-show="showCk" class="relative"><div class="maskLayer"></div><input ng-model="item.ck" type="checkbox" /></td>
             <td v-show="showActions" class="text-center">
-                <a v-for="x in actions" @click="x['action'](item,bodyData);" class="btn btn-default btn-xs btnCls">{{x.name}}</a>
+                <a v-for="x in actions" :key="x.name" @click="x['action'](item,bodyData);" class="btn btn-default btn-xs btnCls">{{x.name}}</a>
             </td>
             <td v-for="col in originCols" :key="col.key">
                 <div v-if="col.config.convert && col.config.click">
-                    <div :id="item.__tmpId" :title="item[col.key]" @click="col['click'](item,bodyData);">{{col['convert'](item[col.key],item,bodyData)}}</div>
+                    <div :title="item[col.key]" @click="col['click'](item,bodyData);">{{col['convert'](item[col.key],item,bodyData)}}</div>
                 </div>
                 <div v-if="col.config.convert == false && col.config.click">
-                    <div :id="item.__tmpId" :title="item[col.key]" @click="col['click'](item,bodyData);">{{item[col.key]}}</div>
+                    <div :title="item[col.key]" @click="col['click'](item,bodyData);">{{item[col.key]}}</div>
                 </div>
                 <div v-if="col.config.convert && col.config.click == false">
-                    <div :id="item.__tmpId" :title="item[col.key]">{{col['convert'](item[col.key],item,bodyData)}}</div>
+                    <div :title="item[col.key]">{{col['convert'](item[col.key],item,bodyData)}}</div>
                 </div>
                 <div v-if="col.config.convert == false && col.config.click == false">
-                    <div :id="item.__tmpId" :title="item[col.key]">{{item[col.key]}}</div>
+                    <div :title="item[col.key]">{{item[col.key]}}</div>
                 </div>
             </td>
         </tr>
@@ -86,10 +86,11 @@
         },
         methods:{
             dealCols:function () {
-              var res = [];
+              let res = [];
               this.headerCols.map(item=>{
                   res.push(ctl.dealHeaderData(item));
               })
+                console.log(res);
                 return res;
             },
             onConvert:function () {

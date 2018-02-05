@@ -43,16 +43,15 @@ export default {
           body:{
               map:[
                   {key:"username",value:"username"},
-                  {key:"id",value:"id",convert:function (a,b,c,d) {
-                          let dom = document.querySelector("#"+b.__tmpId);
+                  {key:"id",value:"id",convert:function (a,b,c) {
                           if(a>5){
-                              dom.innerHTML = "<span style='color:red'></span>";
+                              return ">>>5";
                           } else {
-                              dom.innerHTML = "<span style='color:yellow'></span>";
+                              return "<<<5";
                           }
-                      }},
+                      },cls:"red"},
                   {key:"name",value:"name"},
-                  {key:"id",value:"name11"}
+                  {key:"name11",value:"name11"}
               ],
               showCk:true,
               ckCallback:function(d){
@@ -60,7 +59,7 @@ export default {
               }
           },
           actions:[
-              {name:"edit",action:function (a,b,c) {
+              {name:"编辑",action:function (a,b,c) {
                   }},
               {name:"delete",action:function () {
 
@@ -130,6 +129,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  .red{
+    color:red;
+  }
 h1, h2 {
   font-weight: normal;
 }
