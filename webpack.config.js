@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = (env = {}) =>{
-  console.log(`------------------- ${env.production?'生产':'开发'}环境 -------------------`);
+  console.log(`------------------- ${env.Generative?'生产':'开发'}环境 -------------------`);
   var plugins = (module.exports.plugins || []).concat([
     new CleanWebpackPlugin(['dist']),
     new webpack.optimize.UglifyJsPlugin({
@@ -18,7 +18,7 @@ module.exports = (env = {}) =>{
       minimize: true
     })
   ])
-  if(!env.production){
+  if(!env.Generative){
     plugins = [];
   }
   plugins.push(new CopyWebpackPlugin([{
@@ -31,7 +31,7 @@ module.exports = (env = {}) =>{
     entry: './src/main.js',//入口
     output: {
       path: path.resolve(__dirname, './dist'),//输出结果
-      // publicPath: '',//publicPath项则被许多Webpack的插件用于在生产模式和开发模式下下更新内嵌到css、html，img文件里的url值
+      // publicPath: evn.production ? './' : '/', //文件路径
       filename: '[name].js',
       chunkFilename: '[id].chunk.js'
     },
@@ -85,10 +85,20 @@ module.exports = (env = {}) =>{
         'vue$': 'vue/dist/vue.esm.js'
       }
     },
-    devServer: {//webpack-dev-server配置
-      historyApiFallback: true,//不跳转
-      noInfo: true,
-      inline: true//实时刷新
+    devServer: {
+      inline: true, //检测文件变化，实时构建并刷新浏览器
+      port: "8000",
+      proxy: {
+          '/api': {
+              target: 'http://127.0.0.1:3008/',
+              pathRewrite: {
+                  "^/api": ""
+              },
+              secure: false
+          },
+      },
+      //404 页面返回 index.html 
+      historyApiFallback: true,
     },
     performance: {
       hints: false

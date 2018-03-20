@@ -22,24 +22,8 @@
         },
         methods:{
             getData:function () {
-              window.console.log("ready to get data from server, url is: " + this.getUrl());
-              var that = this;
-              window.setTimeout(function () {
-                that.data = [
-                  {id:"1",name:"aa",age:"12",sex:"1"},
-                  {id:"2",name:"bb",age:"13",sex:"0"},
-                  {id:"3",name:"cc",age:"14",sex:"1"},
-                  {id:"4",name:"dd",age:"15",sex:"0"}
-                ];
-                that.cols = that.getCols(that.data);
-              },100)
-            },
-            getCols:function (data) {
-              var res = [];
-              for(var i in data[0]){
-                res.push(i);
-              }
-              return res;
+
+              this.cols = that.getCols(that.data);
             },
             delcb:function (item) {
               debugger

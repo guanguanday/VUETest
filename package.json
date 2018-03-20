@@ -5,8 +5,8 @@
   "author": "damon05 <damon05@163.com>",
   "private": true,
   "scripts": {
-    "dev": "cross-env --env.production=false webpack-dev-server --open --inline",
-    "build": "webpack --env.production=true"
+    "dev": "webpack-dev-server --open",
+    "build": "webpack --progress --env.Generative=true"
   },
   "dependencies": {
     "clean-webpack-plugin": "^0.1.18",

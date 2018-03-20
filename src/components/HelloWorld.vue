@@ -23,17 +23,19 @@ export default {
       optionsTable:{
           paging:{
               getUrl:function(){
-                  return "./static/js/list.json";
+                  return "/api/at/list?describe=";
               },
               analysis:function(d){
-                  var data = {data: d.list,totalCount: d.total};
-                  return data;
+                  return {
+                    data:data.data.data,
+                    totalCount:data.data.count
+                };
               },
               pageParams:{
                   size:10,
                   index:1,
-                  indexKey:"pageNum",
-                  sizeKey:"pageSize"
+                  indexKey:"index",
+                  sizeKey:"size"
               },
               callback:function(data,index){
                   console.log(data,index);
@@ -42,16 +44,10 @@ export default {
           },
           body:{
               map:[
-                  {key:"username",value:"username"},
-                  {key:"id",value:"id",convert:function (a,b,c) {
-                          if(a>5){
-                              return ">>>5";
-                          } else {
-                              return "<<<5";
-                          }
-                      },cls:"red"},
-                  {key:"name",value:"name"},
-                  {key:"name11",value:"name11"}
+                {key:"describe",val:"测试用例描述"},
+                {key:"operator",val:"操作人"},
+                {key:"runTime",val:"操作时间"},
+                {key:"items.length",val:"用例个数"}
               ],
               showCk:true,
               ckCallback:function(d){
@@ -71,58 +67,10 @@ export default {
   methods:{
     goTodo:function (event) {
       this.$router.push({path:"todo"});
-    },
-    initTable:function () {
-        var that = this;
-        window.setTimeout(function () {
-            that.optionsTable = {
-                paging:{
-                    getUrl:function(){
-                        return "./static/js/list.json";
-                    },
-                    analysis:function(d){
-                        var data = {data: d.list,totalCount: d.total};
-                        return data;
-                    },
-                    pageParams:{
-                        size:10,
-                        index:1,
-                        indexKey:"pageNum",
-                        sizeKey:"pageSize"
-                    },
-                    callback:function(data,index){
-                        console.log(data,index);
-                        // currentIndex = index;
-                    }
-                },
-                headBody:{
-                    map:[
-                        {key:"id",value:"id"},
-                        {key:"username",value:"username"},
-                        {key:"name",value:"name"},
-                        {key:"id",value:"name11"}
-                    ],
-                    showCk:true,
-                    ckCallback:function(d){
-                        console.log("selected items length is: " + d.length);
-                    }
-                },
-                actions:[
-                    {name:"edit",action:function () {
-                            
-                        }},
-                    {name:"delete",action:function () {
-
-                        }}
-                ]
-            }
-
-            that.$refs['table1'].getData();
-        },1000)
     }
   },
     mounted:function () {
-        this.initTable();
+        
     }
 }
 </script>
