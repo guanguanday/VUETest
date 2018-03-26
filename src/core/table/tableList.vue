@@ -82,10 +82,10 @@
             init:function(){
                 this.currentIndex = this.pagingOptions.pageParams.index;
                 this.getData(this.currentIndex);
-            },
-            created(){
-
             }
+        },
+        created(){
+            this.init();
         }
     }
 </script>

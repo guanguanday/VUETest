@@ -1,7 +1,6 @@
 /**
  * Created by wupeng5 on 2018/1/7.
  */
-
 /**
  * ajax 处理类，
  * get: return promise
@@ -51,6 +50,8 @@ let AjaxUtil = function(){
         return defer.promise;
     };
 };
+
+// export default new AjaxUtil();
 
 let AjaxService = new AjaxUtil();
 import CommonUtil from "./commonUtil.js";

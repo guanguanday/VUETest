@@ -5,25 +5,31 @@
     <ul>
       <li>
         <a @click="goTodo">Todo</a>
+
+        <a @click="e=>{this.SET('aaaaa')}">Change</a>
       </li>
     </ul>
 
-    <table-list ref="table1" :options="optionsTable"></table-list>
+    <v-v :data="data1" :cb="RESET"></v-v>
+
+    <table-list ref={tk} :options="optionsTable"></table-list>
   </div>
 </template>
 
 <script>
   import TableList from "../core/table/tableList.vue";
+  import VV from "./vv.vue";
 export default {
   name: 'HelloWorld',
-    components: {TableList},
+  components: {TableList,VV},
   data () {
     return {
+      tk:"abc",
       msg: 'Welcome to Your Vue.js a',
       optionsTable:{
           paging:{
               getUrl:function(){
-                  return "/api/at/list?describe=";
+                  return "/api/at/list?describe=11";
               },
               analysis:function(d){
                   return {
@@ -49,10 +55,7 @@ export default {
                 {key:"runTime",val:"操作时间"},
                 {key:"items.length",val:"用例个数"}
               ],
-              showCk:true,
-              ckCallback:function(d){
-                  console.log("selected items length is: " + d.length);
-              }
+              showCk:true
           },
           actions:[
               {name:"编辑",action:function (a,b,c) {
@@ -61,17 +64,28 @@ export default {
 
                   }}
           ]
-        }
+        },
+      data1:{
+          name:"xxxxx"
+      }
     }
   },
   methods:{
     goTodo:function (event) {
       this.$router.push({path:"todo"});
+    },
+    RESET:function (e) {
+        debugger
+        this.data1 = e;
     }
   },
-    mounted:function () {
-        
-    }
+  mounted:function () {
+
+  },
+  created(){
+
+  }
+
 }
 </script>
 
