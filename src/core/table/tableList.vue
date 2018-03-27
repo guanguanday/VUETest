@@ -1,97 +1,110 @@
 <template>
     <div class="tableContainer">
-        <body-section :ck-callback="bodyOptions.ckCallback?bodyOptions.ckCallback:null" :show-ck="bodyOptions.showCk?true:false" :header-cols="bodyOptions.map" :actions="actionOptions" :community-key="bodyPrimaryKey" :body-data="bodyData"></body-section>
 
-        <paging :community-key="pagingPrimaryKey" :options="pagingData"></paging>
+        <table>
+            <header-section :show-ck="showCk" :origin-cols="originCols" :accpet-h-b-notice="accpetHBNotice" :notice-change-cols="noticeChangeCols" :ck="state.ck" :actions="actions" :cols="state.cols"></header-section>        
+
+            <!-- <body-section></body-section> -->
+        </table>
+
+        <!-- <paging-section></paging-section> -->
     </div>
 </template>
 
 <script>
+    import HeaderSection from "./header.vue";
     import BodySection from "./body.vue";
-    import Paging from "./paging.vue";
-    import CommonUtil from "../../tool/commonUtil.js";
-    import AjaxUtil from "../../tool/ajaxUtil.js";
+    import PagingSection from "./paging.vue";
+    import Util from "../../tool/commonUtil.js";
+    import AjaxUtil from "../../tool/ajaxService.js";
     export default {
         extends:AjaxUtil,
-        components: {BodySection,Paging},
+        components: {HeaderSection,BodySection,PagingSection},
         props:["options"],
         name: "TableList",
         data(){
             return {
-                pagingOptions:this.options.paging,
-                bodyOptions:this.options.body,
-                actionOptions:this.options.actions,
-                pagingPrimaryKey:Math.ceil(Math.random()*1000000000),
-                bodyPrimaryKey:Math.ceil(Math.random()*1000000000),
-                currentIndex:1,
-                bodyData:{},
-                pagingData:{
-                    index:"-",
-                    pageTotal:"-",
-                    countTotal:"-",
-                    callback:this.pagingReload
+                state:{
+                    data:[],
+                    cols:this.options.map,
+                    ck:false,
+                    pageOption:{
+                        index:this.options.pageOption.index?this.options.pageOption.index:1,
+                        size:this.options.pageOption.size?this.options.pageOption.size:10,
+                        count:0,
+                        total:0
+                    }
                 }
+            }
+        },
+        computed:{
+            originCols:function(){
+                return Util.object.cloneObj(this.options.map);
+            },
+            showCk:function(){
+                return this.options.showCk;
+            },
+            actions:function(){
+                return this.options.actions;
+            },
+            getUrl:function(){
+                return this.options.getUrl;
             }
         },
         methods:{
-            pagingReload:function (index) {
-                this.getData(index);
-            },
-            getUrl:function (index){
-                let _get_url = this.pagingOptions.getUrl;
-                if(typeof _get_url != "function" || _get_url() == ""){
-                    CommonUtil.throwError("TableList must config getUrl param");
-                    return "";
-                }
+            getData(index){
                 if(!index){
-                    index = this.currentIndex;
+                    index = 1;
                 }
-                let url = this.pagingOptions.getUrl();
-                let chat = url.indexOf('?') ==-1?"?":"&";
-                let pageParams = this.pagingOptions.pageParams;
-                url = url + chat + pageParams["indexKey"] + "=" + index + "&" + pageParams["sizeKey"] + "=" + pageParams.size+"&ran="+Math.random();
-                return url;
-            },
-            getData:function (index){
-                let _url = this.getUrl(index);
-                if(_url == ""){
+                let url = this.options.getUrl();
+                if( url === ""){
                     return;
                 }
-                let that = this;
-                let size = that.pagingOptions.pageParams.size;
-                this.doFetch(_url,"get",null).then(function(d){
-                    //处理body需要的数据结构完毕
-                    let data = that.pagingOptions.analysis(d.data);
-                    let list = d.list;
-                    //页码数据赋值
-                    if(parseInt(data.totalCount)%size == 0){
-                        that.pagingData.pageTotal = parseInt(data.totalCount)/size;
+                let suffix = url.indexOf('?') === -1?"?":"&";
+                let size = this.state.pageOption.size;
+                url += suffix + this.options.pageOption.indexKey + "=" + index + "&"+ this.options.pageOption.sizeKey + "=" + size;
+                this.doFetch(url,"get",null).then(data=>{
+                    let res = {};
+                    if(this.options.analysis){
+                        res = this.options.analysis(data);
                     }else{
-                        that.pagingData.pageTotal = parseInt(parseInt(data.totalCount)/size) + 1;
+                        res = data;
                     }
-                    that.pagingData.index = index?index:1;
-                    that.pagingData.countTotal = data.totalCount;
-                    if(that.pagingOptions.callback){
-                        that.pagingOptions.callback(list,that.currentIndex);
+                    res.data = Util.object.addPrimaryAndCk(res.data);
+                    if(res.data && res.data instanceof Array && res.data.length != 0){
+                        let arr = Util.object.addPrimaryAndCk(res.data);
+                        let total = -1;
+                        if(parseInt(res.count)%size == 0){
+                            total = parseInt(res.count)/size;
+                        }else{
+                            total = parseInt(parseInt(res.count)/size) + 1;
+                        }
+
+                        this.state.data = arr;
+                        this.state.pageOption = {index:index,count:arr.length,total:total,size:size};
+                    }else{
+                        Util.throwError("检查analysis, getUrl, pageOption参数!");
                     }
-                    //通知body和paging更新数据
-                    eventCtl.broadcast(that.pagingPrimaryKey,that.pagingData);
-                    eventCtl.broadcast(that.bodyPrimaryKey,list);
                 })
             },
-            init:function(){
-                this.currentIndex = this.pagingOptions.pageParams.index;
-                this.getData(this.currentIndex);
+            accpetHBNotice(){
+
+            },
+            noticeChangeCols(map){
+                this.state.cols = map;
             }
         },
         created(){
-            this.init();
+            
+        },
+        mounted () {
+            this.getData(this.state.pageOption.index);
         }
     }
 </script>
 
 <style scoped>
     .tableContainer{
-
+        border: 1px solid rebeccapurple;
     }
 </style>

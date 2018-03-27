@@ -27,43 +27,32 @@ export default {
       tk:"abc",
       msg: 'Welcome to Your Vue.js a',
       optionsTable:{
-          paging:{
-              getUrl:function(){
-                  return "/api/at/list?describe=11";
-              },
-              analysis:function(d){
-                  return {
-                    data:data.data.data,
-                    totalCount:data.data.count
-                };
-              },
-              pageParams:{
-                  size:10,
-                  index:1,
-                  indexKey:"index",
-                  sizeKey:"size"
-              },
-              callback:function(data,index){
-                  console.log(data,index);
-                  // currentIndex = index;
-              }
-          },
-          body:{
-              map:[
-                {key:"describe",val:"测试用例描述"},
-                {key:"operator",val:"操作人"},
-                {key:"runTime",val:"操作时间"},
+          actions :[
+                {key:"edit",val:"修改"},
+                {key:"run",val:"Run"}
+            ],
+            showCk:true,
+            map:[
+                {key:"runTime",val:"操作时间",type:"date"},
+                {key:"runTime",val:"操作时间1",type:"datetime"},
+                {key:"runTime",val:"操作时间2",type:"time"},
                 {key:"items.length",val:"用例个数"}
-              ],
-              showCk:true
-          },
-          actions:[
-              {name:"编辑",action:function (a,b,c) {
-                  }},
-              {name:"delete",action:function () {
-
-                  }}
-          ]
+            ],
+            getUrl:()=>{
+                return "/api/at/list?describe=";
+            },
+            pageOption:{
+                sizeKey:"size",
+                indexKey:"index",
+                index:1,
+                size:10
+            },
+            analysis:(data)=>{
+                return {
+                    data:data.data.data,
+                    count:data.data.count
+                };
+            }
         },
       data1:{
           name:"xxxxx"

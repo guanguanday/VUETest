@@ -11,6 +11,11 @@
  * code:701，未登录
  * code失败的情况下，打印message
  * data  为返回结果
+ * 
+ * 
+ * 
+ * 组件内部请求ajax必须继承此类extends:AjaxUtil
+ * 
  **/
 let AjaxUtil = function(){
     this.doFetch = function(url,method,data){
@@ -33,14 +38,14 @@ let AjaxUtil = function(){
         }
         let that = this;
         fetch(url).then(d =>d.json()).then(function (data) {
-            let code = data.code;
+            let code = data.status;
             if(code == "701"){
                 that.$router.push({path:"todo"});
             }else{
                 if(code == "200"){
-                    defer.resolve({data:data.data,list: CommonUtil.addPrimaryAndCk(data.data.list)});
+                    defer.resolve({data:data.data,params:data.params});
                 }else{
-                    defer.reject({data: data.message});
+                    defer.reject({data: data.msg});
                 }
             }
         }).catch(function(err) {
@@ -54,7 +59,6 @@ let AjaxUtil = function(){
 // export default new AjaxUtil();
 
 let AjaxService = new AjaxUtil();
-import CommonUtil from "./commonUtil.js";
 export default {
     name: "AjaxUtil",
     methods:{
